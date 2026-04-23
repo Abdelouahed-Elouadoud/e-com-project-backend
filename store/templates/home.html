@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Store Home</title>
+</head>
+<body>
+    <h1>Bienvenue dans l'app Store 🚀</h1>
+    <p>Ceci est ma première page Django</p>
+    <h1>Liste des 3 Customers</h1>
+
+    <ul>
+        {% for customer in customers %}
+            <li>
+                {{ customer.first_name }} {{ customer.last_name }} -
+                {{ customer.email }} -
+                {{ customer.membership }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
