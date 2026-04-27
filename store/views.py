@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-# from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 # from django.shortcuts import get_object_or_404
 
 from .models import Custumer ,Collection ,Product , Reviews
-from .serializers import ProductSerializer ,ProductSerializerr, CollectionSerializer , ReviewSerializer
+from .serializers import CustomerSerializer ,ProductSerializer, CollectionSerializer , ReviewSerializer
 
 # from rest_framework.generics import ListCreateAPIView
 
@@ -22,6 +22,8 @@ from .filters import ProductFilter
 from rest_framework.filters import SearchFilter , OrderingFilter
 
 from rest_framework.pagination import PageNumberPagination
+
+from .tasks import test_task
 # Create your views here.
 
 def home(request):
@@ -41,9 +43,18 @@ def home(request):
 #         serializer.save()
 #         return Response(serializer.data,status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+def run_task(request):
+    test_task.delay()
+    return Response({"message": "Task started"})
+
+class CustomerViewSet(ModelViewSet):
+    queryset = Custumer.objects.all()
+    serializer_class = CustomerSerializer
+
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.select_related('collection').all()
-    serializer_class = ProductSerializerr
+    serializer_class = ProductSerializer
     filter_backends= [DjangoFilterBackend , SearchFilter , OrderingFilter]
     filterset_class =ProductFilter
     search_fields = ['title','description']

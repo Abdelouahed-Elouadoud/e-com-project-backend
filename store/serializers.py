@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from .models import Custumer , Collection , Product , Reviews
 
-class ProductSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='first_name')
+class CustomerSerializer(serializers.ModelSerializer):
+    #name = serializers.CharField(source='first_name')
+    first_name = serializers.CharField(source='user.first_name')
+    email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = Custumer
-        fields = ['id', 'email', 'name']
+        fields = ['id','first_name' ,'email', 'phone']
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -15,7 +17,7 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields =['id','titre']
 
 
-class ProductSerializerr(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     collection = CollectionSerializer(read_only=True)
     class Meta:
         model = Product

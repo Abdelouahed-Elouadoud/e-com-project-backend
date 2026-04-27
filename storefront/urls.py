@@ -18,16 +18,45 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 
-admin.site.site_header = 'Storefront Admin'
-admin.site.index_title = 'Admin'
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
 
 urlpatterns = [
+    # 🛠️ Admin
     path('admin/', admin.site.urls),
+
+    # 🔐 AUTH CORE
+    path('api/', include('core.urls')),
+
+    # 🔑 JWT
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # 📦 APPS
+    path('api/store/', include('store.urls')),
+ #   path('api/likes/', include('likes.urls')),
+  #  path('api/tags/', include('tags.urls')),
+
+    # 🧪 PLAYGROUND (tests)
     path('playground/', include('playground.urls')),
-    path('store/', include('store.urls')),
+    
+    # API schema (backend JSON)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+
+    # Swagger UI (interface web)
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+
+    # Redoc (alternative propre)
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
 ]
 
-# Debug toolbar seulement en mode debug
+
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [

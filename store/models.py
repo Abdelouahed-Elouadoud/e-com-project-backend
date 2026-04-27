@@ -1,4 +1,5 @@
 from django.db import models
+from storefront import settings
 
 # Create your models here.
 
@@ -38,18 +39,25 @@ class Custumer(models.Model):
         (MEMBERSHIP_GOLD,'Gold'),
     ]
 
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
+    user= models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    # first_name = models.CharField(max_length=255)
+    # last_name = models.CharField(max_length=255)
+    # email = models.EmailField(unique=True)
     phone= models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1 , choices=MEMBERSHIP_CHOICES , default=MEMBERSHIP_BRONZE)
     #pour afficher les customer dans la page admin avec c est noms
     def __str__(self):
-        return self.first_name
+        return self.user.username
     #default ordering
     class Meta :
-        ordering =['first_name']
+        ordering =['user__first_name']
 
 
 class Order(models.Model):
